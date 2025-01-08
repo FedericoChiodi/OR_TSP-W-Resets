@@ -5,7 +5,7 @@ import org.sanpc.model.Point;
 public class Distance {
 
     /**
-     * Calcola la distanza euclidea tra due punti bidimensionali.
+     * Calcola la distanza euclidea tra due punti bidimensionali
      *
      * @param p1 Il primo punto
      * @param p2 Il secondo punto

@@ -2,6 +2,7 @@ package org.sanpc.heuristics.PSO;
 
 import org.sanpc.model.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.sanpc.utils.Distance.euclideanDistance;
@@ -16,7 +17,7 @@ public class Route {
     }
 
     public Route(Route route) {
-        this.points = route.points;
+        this.points = new ArrayList<>(route.points);;
         this.length = route.length;
     }
 
@@ -38,14 +39,6 @@ public class Route {
         return length;
     }
 
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public double getLength() {
-        return length;
-    }
-
     @Override
     public String toString() {
         return "Route{" +
@@ -53,4 +46,13 @@ public class Route {
                 ", length=" + length +
                 '}';
     }
+
+    // Getters
+    public List<Point> getPoints() {
+        return points;
+    }
+    public double getLength() {
+        return length;
+    }
+
 }

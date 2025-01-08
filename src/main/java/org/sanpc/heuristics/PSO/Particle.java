@@ -22,6 +22,13 @@ public class Particle {
         this.velocity = new Velocity(generateInitialVelocity());
     }
 
+    /**
+     * Genera la velocità iniziale, rappresentata come sequenza di scambi casuali,
+     * di una particella con una probabilità direttamente proporzionale al
+     * numero totale di punti
+     *
+     * @return La lista di mosse iniziali generate casualmente
+     */
     private List<Move> generateInitialVelocity() {
         int numMoves = (int) (Constants.N_OPERATIONS * Constants.INITIAL_VELOCITY_FACTOR);
         List<Move> moves = new ArrayList<>();
@@ -35,15 +42,23 @@ public class Particle {
         return moves;
     }
 
+    /**
+     * Aggiorna la velocità della particella secondo l'equazione di aggiornamento della
+     * velocità implementata con approccio probabilistico di inserire o meno le mosse.
+     * Aggiorna poi la posizione della particella applicando la velocità e controlla
+     * se i personal best sono da aggiornare, e nel caso li aggiorna
+     *
+     * @param globalBest La route migliore vista dallo swarm
+     * @param inertia Il fattore di inerzia della velocità
+     */
     public void updateVelocityAndPosition(Route globalBest, double inertia) {
-        // Generate velocity components
         List<Move> inertiaComponent = velocity.moves();
         List<Move> cognitiveComponent = getMovesTowards(currentPosition, personalBest);
         List<Move> socialComponent = getMovesTowards(currentPosition, globalBest);
 
-        // Apply constriction factor and combine components
         List<Move> newVelocity = new ArrayList<>();
 
+        // Inertia component
         if (Constants.USE_INERTIA) {
             for (Move move : inertiaComponent) {
                 if (random.nextDouble() < inertia) {
@@ -52,30 +67,28 @@ public class Particle {
             }
         }
 
-        // Add cognitive component
+        // Cognitive component
         for (Move move : cognitiveComponent) {
             if (random.nextDouble() < Constants.C1 * random.nextDouble()) {
                 newVelocity.add(move);
             }
         }
 
-        // Add social component
+        // Social component
         for (Move move : socialComponent) {
             if (random.nextDouble() < Constants.C2 * random.nextDouble()) {
                 newVelocity.add(move);
             }
         }
 
-        // Update velocity and position
         velocity = new Velocity(newVelocity);
         currentPosition = velocity.apply(currentPosition);
 
-        // Apply local search if enabled
         if (Constants.USE_2_OPT) {
             apply2OptImprovement();
         }
 
-        // Update fitness and personal best
+        // Aggiornamento dei pbest
         currentFitness = currentPosition.getLength();
         if (currentFitness < personalBestFitness) {
             personalBestFitness = currentFitness;
@@ -83,6 +96,13 @@ public class Particle {
         }
     }
 
+    /**
+     * Calcola la sequenza di mosse per tramutare una route in un'altra
+     *
+     * @param from La route di partenza
+     * @param to La route a cui si vuole arrivare
+     * @return La lista di mosse per tramutare 'from' in 'to'
+     */
     private List<Move> getMovesTowards(Route from, Route to) {
         List<Move> moves = new ArrayList<>();
         List<Point> fromPoints = new ArrayList<>(from.getPoints());
@@ -109,6 +129,9 @@ public class Particle {
         return moves;
     }
 
+    /**
+     * Applica la 2-opt alla posizione corrente della particella
+     */
     private void apply2OptImprovement() {
         boolean improved;
         do {
@@ -118,7 +141,6 @@ public class Particle {
             int bestI = -1;
             int bestJ = -1;
 
-            // 2-opt standard solo tra i punti operazione
             for (int i = 0; i < points.size() - 1; i++) {
                 for (int j = i + 2; j < points.size(); j++) {
                     double gain = calculate2OptGain(points, i, j);
@@ -138,6 +160,14 @@ public class Particle {
         } while (improved);
     }
 
+    /**
+     * Calcola il guadagno che deriva da una mossa dalla 2-opt
+     *
+     * @param points I punti che compongono il percorso totale
+     * @param i Il primo indice che coinvolge la mossa
+     * @param j Il secondo indice che coinvolge la mossa
+     * @return Il guadagno dopo aver simulato la mossa (positivo nel caso di riduzione del percorso totale, negativo o nullo altrimenti)
+     */
     private double calculate2OptGain(List<Point> points, int i, int j) {
         Point p1 = points.get(i);
         Point p2 = points.get(i + 1);
@@ -150,6 +180,14 @@ public class Particle {
         return currentDistance - newDistance;
     }
 
+    /**
+     * Effettua l'aggiornamento dei punti del percorso applicando
+     * la mossa della 2-opt
+     *
+     * @param points I punti che compongono il percorso totale
+     * @param i Il primo indice che coinvolge la mossa
+     * @param j Il secondo indice che coinvolge la mossa
+     */
     private void perform2OptSwap(List<Point> points, int i, int j) {
         int left = i + 1;
         int right = j;
