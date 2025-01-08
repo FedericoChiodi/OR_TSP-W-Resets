@@ -1,5 +1,6 @@
 package org.sanpc.heuristics.PSO;
 
+import org.sanpc.Constants;
 import org.sanpc.model.Point;
 import org.sanpc.utils.Distance;
 import org.sanpc.utils.PointGeneration;

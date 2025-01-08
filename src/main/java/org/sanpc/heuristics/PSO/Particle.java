@@ -1,5 +1,6 @@
 package org.sanpc.heuristics.PSO;
 
+import org.sanpc.Constants;
 import org.sanpc.model.Point;
 
 import java.util.*;
