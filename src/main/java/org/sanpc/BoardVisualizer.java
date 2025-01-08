@@ -1,10 +1,13 @@
 package org.sanpc;
 
+import org.sanpc.heuristics.PSO.PSO;
+import org.sanpc.heuristics.PSO.Route;
 import org.sanpc.model.Point;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BoardVisualizer extends JPanel {
@@ -16,6 +19,7 @@ public class BoardVisualizer extends JPanel {
 
     private List<Point> operations;
     private List<Point> resetPoints;
+    private List<Point> route;
 
     private double scale = 30.0;
     private double offsetX = 40.0;
@@ -32,6 +36,7 @@ public class BoardVisualizer extends JPanel {
 
         this.operations = board.getOperationPoints();
         this.resetPoints = board.getResetPoints();
+        this.route = new ArrayList<>();
 
         addMouseWheelListener(this::handleZoom);
         addMouseListener(new MouseAdapter() {
@@ -55,10 +60,9 @@ public class BoardVisualizer extends JPanel {
 
     public void rerollBoard() {
         Board newBoard = new Board(boardLength, boardWidth, k, operationSize, resetPointSize);
-
         this.operations = newBoard.getOperationPoints();
         this.resetPoints = newBoard.getResetPoints();
-
+        this.route = new ArrayList<>();
         repaint();
     }
 
@@ -67,19 +71,42 @@ public class BoardVisualizer extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = getGraphics2D((Graphics2D) g);
 
-        int x_o = (int) (0 * scale);
-        int y_o = (int) (0 * scale);
-        drawCircle(g2d, x_o, y_o, Color.GREEN, new Point(-1, "X", 0, 0));
+        drawCircle(g2d, 0, 0, Color.GREEN, new Point(-1, "Origin", 0, 0));
 
         for (Point point : operations) {
             int x = (int) (point.getX() * scale);
             int y = (int) (point.getY() * scale);
             drawCircle(g2d, x, y, Color.BLUE, point);
         }
+
         for (Point reset : resetPoints) {
             int x = (int) (reset.getX() * scale);
             int y = (int) (reset.getY() * scale);
             drawCircle(g2d, x, y, Color.RED, reset);
+        }
+
+        if (!route.isEmpty()) {
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(new BasicStroke(2));
+
+            int startX = 0;
+            int startY = 0;
+            int firstX = (int) (route.getFirst().getX() * scale);
+            int firstY = (int) (route.getFirst().getY() * scale);
+            g2d.drawLine(startX, startY, firstX, firstY);
+
+            for (int i = 0; i < route.size() - 1; i++) {
+                int x1 = (int) (route.get(i).getX() * scale);
+                int y1 = (int) (route.get(i).getY() * scale);
+                int x2 = (int) (route.get(i + 1).getX() * scale);
+                int y2 = (int) (route.get(i + 1).getY() * scale);
+
+                g2d.drawLine(x1, y1, x2, y2);
+            }
+
+            int lastX = (int) (route.getLast().getX() * scale);
+            int lastY = (int) (route.getLast().getY() * scale);
+            g2d.drawLine(lastX, lastY, startX, startY);
         }
     }
 
@@ -125,11 +152,7 @@ public class BoardVisualizer extends JPanel {
         JFrame frame = new JFrame("Board Visualizer");
         BoardVisualizer visualizer = new BoardVisualizer(board);
 
-        JPanel buttonPanel = new JPanel();
-
-        JButton connectButton = new JButton("Connect");
-
-        buttonPanel.add(connectButton);
+        JPanel buttonPanel = getJPanel(visualizer);
 
         frame.setLayout(new BorderLayout());
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -138,6 +161,29 @@ public class BoardVisualizer extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
         frame.setVisible(true);
+    }
+
+    private static JPanel getJPanel(BoardVisualizer visualizer) {
+        JPanel buttonPanel = new JPanel();
+
+        JButton connectButton = new JButton("PSO");
+        connectButton.addActionListener(_ -> {
+            PSO pso = new PSO(visualizer.operations, visualizer.resetPoints);
+            visualizer.setRoute(new Route(pso.optimize()).getPoints());
+            visualizer.repaint();
+        });
+
+        JButton rerollButton = new JButton("Reroll");
+        rerollButton.addActionListener(_ -> visualizer.rerollBoard());
+
+        buttonPanel.add(connectButton);
+        buttonPanel.add(rerollButton);
+
+        return buttonPanel;
+    }
+
+    public void setRoute(List<Point> route) {
+        this.route = route;
     }
 
 }
