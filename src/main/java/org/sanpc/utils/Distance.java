@@ -2,6 +2,8 @@ package org.sanpc.utils;
 
 import org.sanpc.model.Point;
 
+import java.util.List;
+
 public class Distance {
 
     /**
@@ -18,6 +20,30 @@ public class Distance {
         int y2 = p2.getY();
 
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
+    /**
+     * Trova il punto più vicino a un punto di riferimento in una lista di punti,
+     * utilizzando la distanza euclidea come criterio di prossimità.
+     *
+     * @param current Il punto di riferimento rappresentato come una coppia (x, y) di coordinate intere.
+     * @param points  La lista dei punti candidati, ciascuno rappresentato come una coppia (x, y) di coordinate intere.
+     * @return La coppia (x, y) corrispondente al punto più vicino nella lista rispetto al punto di riferimento.
+     *         Restituisce `null` se la lista dei punti è vuota.
+     */
+    public static Point findClosestPoint(Point current, List<Point> points) {
+        Point closestPoint = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (Point point : points) {
+            double distance = euclideanDistance(current, point);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = point;
+            }
+        }
+
+        return closestPoint;
     }
 
 }
