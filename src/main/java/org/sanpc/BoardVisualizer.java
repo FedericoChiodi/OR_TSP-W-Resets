@@ -1,5 +1,7 @@
 package org.sanpc;
 
+import org.sanpc.heuristics.Greedy.Greedy;
+import org.sanpc.heuristics.LS.TwoOpt;
 import org.sanpc.heuristics.PSO.PSO;
 import org.sanpc.heuristics.PSO.Route;
 import org.sanpc.model.Point;
@@ -166,17 +168,31 @@ public class BoardVisualizer extends JPanel {
     private static JPanel getJPanel(BoardVisualizer visualizer) {
         JPanel buttonPanel = new JPanel();
 
-        JButton connectButton = new JButton("PSO");
-        connectButton.addActionListener(_ -> {
+        JButton psoButton = new JButton("PSO");
+        psoButton.addActionListener(_ -> {
             PSO pso = new PSO(visualizer.operations, visualizer.resetPoints);
             visualizer.setRoute(new Route(pso.optimize()).getPoints());
+            visualizer.repaint();
+        });
+
+        JButton greedyButton = new JButton("Greedy");
+        greedyButton.addActionListener(_ -> {
+            visualizer.setRoute(Greedy.nearestNeighbor(visualizer.operations, visualizer.resetPoints));
+            visualizer.repaint();
+        });
+
+        JButton twoOptButton = new JButton("2-opt");
+        twoOptButton.addActionListener(_ -> {
+            visualizer.setRoute(TwoOpt.apply2OptImprovement(visualizer.operations));
             visualizer.repaint();
         });
 
         JButton rerollButton = new JButton("Reroll");
         rerollButton.addActionListener(_ -> visualizer.rerollBoard());
 
-        buttonPanel.add(connectButton);
+        buttonPanel.add(psoButton);
+        buttonPanel.add(greedyButton);
+        buttonPanel.add(twoOptButton);
         buttonPanel.add(rerollButton);
 
         return buttonPanel;
