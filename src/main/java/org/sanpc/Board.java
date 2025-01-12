@@ -20,8 +20,11 @@ public class Board {
         this.width = width;
         this.k = k;
 
-        resetPoints = generatePoints(resetPointSize, width, length, 0, "R", new HashSet<>());
-        operationPoints = generatePoints(operationSize, width, length, resetPoints.size(), "O", new HashSet<>(resetPoints));
+        List<Point> allPoints = new ArrayList<>();
+        allPoints.add(new Point(-1, "X", 0,0 ));
+        resetPoints = new ArrayList<>(generatePoints(resetPointSize, width, length, 0, "R", allPoints));
+        allPoints.addAll(resetPoints);
+        operationPoints = new ArrayList<>(generatePoints(operationSize, width, length, resetPoints.size(), "O", allPoints));
     }
 
     public void printBoard() {
@@ -41,13 +44,10 @@ public class Board {
         }
     }
 
-    private List<Point> generatePoints(int nPoints, int maxX, int maxY, int startingID, String type, Set<Point> existingPoints) {
+    private List<Point> generatePoints(int nPoints, int maxX, int maxY, int startingID, String type, List<Point> existingPoints) {
         List<Point> points = new ArrayList<>();
         Random random = new Random();
         int currentID = startingID;
-
-        Point origin = new Point(-1, "X", 0, 0);
-        existingPoints.add(origin);
 
         while (points.size() < nPoints) {
             int x = random.nextInt(maxX + 1);
