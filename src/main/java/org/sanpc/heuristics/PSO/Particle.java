@@ -85,11 +85,6 @@ public class Particle {
         velocity = new Velocity(newVelocity);
         currentPosition = velocity.apply(currentPosition);
 
-        if (Constants.USE_2_OPT) {
-            TwoOpt twoOpt = new TwoOpt();
-            currentPosition = new Route(twoOpt.apply2OptImprovement(currentPosition.getPoints()));
-        }
-
         // Aggiornamento dei pbest
         currentFitness = currentPosition.getLength();
         if (currentFitness < personalBestFitness) {
