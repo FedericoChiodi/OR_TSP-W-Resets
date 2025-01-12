@@ -12,7 +12,7 @@ public class Board {
     private final List<Point> resetPoints;
 
     public Board(int length, int width, int k, int operationSize, int resetPointSize) throws IllegalArgumentException {
-        if ((length + 1) * (width + 1) < resetPointSize + operationSize) {
+        if ((length + 1) * (width + 1) - 1 < resetPointSize + operationSize) {
             throw new IllegalArgumentException("The board is not big enough to host all operation and reset points!");
         }
 
@@ -20,8 +20,8 @@ public class Board {
         this.width = width;
         this.k = k;
 
-        resetPoints = generatePoints(resetPointSize, width, length, 0, "R", new ArrayList<>());
-        operationPoints = generatePoints(operationSize, width, length, resetPoints.size(), "O", resetPoints);
+        resetPoints = generatePoints(resetPointSize, width, length, 0, "R", new HashSet<>());
+        operationPoints = generatePoints(operationSize, width, length, resetPoints.size(), "O", new HashSet<>(resetPoints));
     }
 
     public void printBoard() {
@@ -41,19 +41,22 @@ public class Board {
         }
     }
 
-    private List<Point> generatePoints(int nPoints, int maxX, int maxY, int startingID, String type, List<Point> existingPoints) {
+    private List<Point> generatePoints(int nPoints, int maxX, int maxY, int startingID, String type, Set<Point> existingPoints) {
         List<Point> points = new ArrayList<>();
-        Set<Point> seenPoints = new HashSet<>(existingPoints);
         Random random = new Random();
         int currentID = startingID;
+
+        Point origin = new Point(-1, "X", 0, 0);
+        existingPoints.add(origin);
 
         while (points.size() < nPoints) {
             int x = random.nextInt(maxX + 1);
             int y = random.nextInt(maxY + 1);
             Point point = new Point(currentID, type, x, y);
 
-            if (seenPoints.add(point)) {
+            if (!existingPoints.contains(point)) {
                 points.add(point);
+                existingPoints.add(point);
                 currentID++;
             }
         }
@@ -77,5 +80,4 @@ public class Board {
     public List<Point> getResetPoints() {
         return resetPoints;
     }
-
 }
