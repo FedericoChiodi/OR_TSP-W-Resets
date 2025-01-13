@@ -1,6 +1,4 @@
-package org.sanpc.heuristics.PSO;
-
-import org.sanpc.model.Point;
+package org.sanpc.model;
 
 import java.util.ArrayList;
 import java.util.List;

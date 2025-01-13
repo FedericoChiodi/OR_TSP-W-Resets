@@ -3,7 +3,7 @@ package org.sanpc;
 import org.sanpc.heuristics.Greedy.Greedy;
 import org.sanpc.heuristics.LS.TwoOpt;
 import org.sanpc.heuristics.PSO.PSO;
-import org.sanpc.heuristics.PSO.Route;
+import org.sanpc.model.Route;
 import org.sanpc.model.Point;
 
 import javax.swing.*;

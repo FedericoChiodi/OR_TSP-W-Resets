@@ -2,6 +2,7 @@ package org.sanpc.heuristics.PSO;
 
 import org.sanpc.Constants;
 import org.sanpc.model.Point;
+import org.sanpc.model.Route;
 
 import java.util.*;
 
