@@ -27,23 +27,6 @@ public class Board {
         operationPoints = new ArrayList<>(generatePoints(operationSize, width, length, resetPoints.size(), "O", allPoints));
     }
 
-    public void printBoard() {
-        System.out.println("Length: " + this.length);
-        System.out.println("Width: " + this.width);
-        System.out.println("K: " + this.k);
-
-        System.out.println("Operation points:");
-        for (Point point : operationPoints) {
-            System.out.println(point);
-        }
-        System.out.println();
-
-        System.out.println("Reset points:");
-        for (Point point : resetPoints) {
-            System.out.println(point);
-        }
-    }
-
     private List<Point> generatePoints(int nPoints, int maxX, int maxY, int startingID, String type, List<Point> existingPoints) {
         List<Point> points = new ArrayList<>();
         Random random = new Random();

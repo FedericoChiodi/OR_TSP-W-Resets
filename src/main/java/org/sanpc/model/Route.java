@@ -18,7 +18,7 @@ public class Route {
     }
 
     public Route(Route route) {
-        this.points = new ArrayList<>(route.points);;
+        this.points = new ArrayList<>(route.points);
         this.length = route.length;
     }
 
