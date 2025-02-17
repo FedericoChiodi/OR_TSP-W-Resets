@@ -29,6 +29,7 @@ public class TabuSearch {
         int aspiration_count = 0;
         int tabu_count = 0;
         int non_tabu_count = 0;
+        int wentNonAdmissible = 0;
         boolean aspiration;
 
         Route currentSolution = new Route(route);
@@ -77,6 +78,10 @@ public class TabuSearch {
                 }
             }
 
+            if (currentSolution.countViolations() > 0) {
+                wentNonAdmissible++;
+            }
+
             // Step 3: STOP OR LOOP
             if (has_solution_improved(currentSolution, bestSolution) || aspiration) {
                 if (aspiration) {
@@ -96,6 +101,7 @@ public class TabuSearch {
         System.out.println("Miglior valore della funzione obiettivo trovato: " + evaluate_objective_function(bestSolution));
         System.out.println("Numero di violazioni nella migliore soluzione: " + bestSolution.countViolations());
         System.out.println("Numero di aspirazioni: " + aspiration_count);
+        System.out.println("Numero di esplorazioni in zone non ammissibili: " + wentNonAdmissible);
         System.out.println("Numero di tabu: " + tabu_count);
         System.out.println("Numero di non tabu: " + non_tabu_count);
 

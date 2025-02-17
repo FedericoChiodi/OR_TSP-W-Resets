@@ -2,6 +2,7 @@ package org.sanpc.heuristics.greedy;
 
 import org.sanpc.Constants;
 import org.sanpc.model.Point;
+import org.sanpc.model.Route;
 import org.sanpc.utils.Distance;
 
 import java.util.ArrayList;
@@ -44,6 +45,9 @@ public class Greedy {
                 operationsDone = 0;
             }
         }
+
+        Route route = new Route(result);
+        System.out.println("Route cost - Greedy: " + route.getLength() + "\n");
 
         return result;
     }

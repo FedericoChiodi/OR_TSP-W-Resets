@@ -234,7 +234,7 @@ public class BoardVisualizer extends JPanel {
 
         JButton twoOptButton = new JButton("2-opt");
         twoOptButton.addActionListener(_ -> {
-            visualizer.setRoute(TwoOpt.apply2OptImprovement(visualizer.operations));
+            visualizer.setRoute(TwoOpt.apply2OptImprovement(visualizer.route));
             visualizer.repaint();
         });
 

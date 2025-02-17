@@ -1,6 +1,7 @@
 package org.sanpc.heuristics.LS.twoopt;
 
 import org.sanpc.model.Point;
+import org.sanpc.model.Route;
 import org.sanpc.utils.Distance;
 
 import java.util.ArrayList;
@@ -9,16 +10,9 @@ import java.util.List;
 
 public class TwoOpt {
 
-    /**
-     * Applica la 2-opt alla lista di punti ordinati secondo l'ordine di
-     * visita. Viene considerato anche l'origine nell'ottimizzazione
-     *
-     * @param points La lista ordinata di punti su cui si vuole applicare la 2 opt
-     * @return La route ottimizzata
-     */
     public static List<Point> apply2OptImprovement(List<Point> points) {
         List<Point> routeWithOrigin = new ArrayList<>();
-        routeWithOrigin.add(new Point(-1, "X", 0, 0));
+        routeWithOrigin.add(new Point(-1, "X", 0, 0)); // Origin point
         routeWithOrigin.addAll(points);
 
         boolean improved;
@@ -29,7 +23,15 @@ public class TwoOpt {
             int bestJ = -1;
 
             for (int i = 0; i < routeWithOrigin.size() - 1; i++) {
+                // Salta se il punto corrente è "R"
+                if ("R".equals(routeWithOrigin.get(i).getType())) continue;
+
                 for (int j = i + 2; j < routeWithOrigin.size(); j++) {
+                    // Salta se il punto j è "R" o se ci sono "R" tra i+1 e j
+                    if ("R".equals(routeWithOrigin.get(j).getType()) || hasResetBetween(routeWithOrigin, i + 1, j - 1)) {
+                        continue;
+                    }
+
                     double gain = calculate2OptGain(routeWithOrigin, i, j);
                     if (gain > bestGain) {
                         bestGain = gain;
@@ -45,18 +47,21 @@ public class TwoOpt {
             }
         } while (improved);
 
-        // Rimuove l'origine
+        Route route = new Route(routeWithOrigin);
+        System.out.println("Route cost - 2opt: " + route.getLength() + "\n");
+
         return new ArrayList<>(routeWithOrigin.subList(1, routeWithOrigin.size()));
     }
 
-    /**
-     * Calcola il guadagno che deriva da una mossa dalla 2-opt
-     *
-     * @param points I punti che compongono il percorso totale
-     * @param i Il primo indice che coinvolge la mossa
-     * @param j Il secondo indice che coinvolge la mossa
-     * @return Il guadagno dopo aver simulato la mossa (positivo nel caso di riduzione del percorso totale, negativo o nullo altrimenti)
-     */
+    private static boolean hasResetBetween(List<Point> points, int from, int to) {
+        for (int k = from; k <= to; k++) {
+            if ("R".equals(points.get(k).getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static double calculate2OptGain(List<Point> points, int i, int j) {
         Point p1 = points.get(i);
         Point p2 = points.get(i + 1);
@@ -69,21 +74,6 @@ public class TwoOpt {
         return currentDistance - newDistance;
     }
 
-    /**
-     * Effettua l'aggiornamento dei punti del percorso applicando
-     * la mossa della 2-opt. Esempio:
-     * <p>
-     * points = [A, B, C, D, E, F, G]
-     * <p>
-     * i = 1, j = 5 -> tra C ed F
-     * <p>
-     * result = [A, B, F, E, D, C, G]
-     *
-     *
-     * @param points I punti che compongono il percorso totale
-     * @param i      Il primo indice che coinvolge la mossa esclusivo
-     * @param j      Il secondo indice che coinvolge la mossa inclusivo
-     */
     public static void perform2OptSwap(List<Point> points, int i, int j) {
         int left = i + 1;
         int right = j;
@@ -93,5 +83,4 @@ public class TwoOpt {
             right--;
         }
     }
-
 }
