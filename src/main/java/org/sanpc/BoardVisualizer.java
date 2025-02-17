@@ -1,7 +1,8 @@
 package org.sanpc;
 
-import org.sanpc.heuristics.Greedy.Greedy;
-import org.sanpc.heuristics.LS.TwoOpt;
+import org.sanpc.heuristics.LS.tabusearch.TabuSearch;
+import org.sanpc.heuristics.greedy.Greedy;
+import org.sanpc.heuristics.LS.twoopt.TwoOpt;
 import org.sanpc.heuristics.PSO.PSO;
 import org.sanpc.model.Route;
 import org.sanpc.model.Point;
@@ -23,7 +24,7 @@ public class BoardVisualizer extends JPanel {
     private List<Point> resetPoints;
     private List<Point> route;
 
-    private double scale = 30.0;
+    private double scale = 25.0;
     private double offsetX = 40.0;
     private double offsetY = 40.0;
     private int dragStartX = 0;
@@ -80,7 +81,6 @@ public class BoardVisualizer extends JPanel {
             int y = (int) (point.getY() * scale);
             drawCircle(g2d, x, y, Color.BLUE, point);
         }
-
         for (Point reset : resetPoints) {
             int x = (int) (reset.getX() * scale);
             int y = (int) (reset.getY() * scale);
@@ -88,27 +88,71 @@ public class BoardVisualizer extends JPanel {
         }
 
         if (!route.isEmpty()) {
-            g2d.setColor(Color.BLACK);
-            g2d.setStroke(new BasicStroke(2));
-
-            int startX = 0;
-            int startY = 0;
-            int firstX = (int) (route.getFirst().getX() * scale);
-            int firstY = (int) (route.getFirst().getY() * scale);
+            int startX = 0, startY = 0;
+            Point firstPoint = route.getFirst();
+            int firstX = (int) (firstPoint.getX() * scale);
+            int firstY = (int) (firstPoint.getY() * scale);
+            g2d.setColor(Color.ORANGE);
+            g2d.setStroke(new BasicStroke(3));
             g2d.drawLine(startX, startY, firstX, firstY);
 
-            for (int i = 0; i < route.size() - 1; i++) {
-                int x1 = (int) (route.get(i).getX() * scale);
-                int y1 = (int) (route.get(i).getY() * scale);
-                int x2 = (int) (route.get(i + 1).getX() * scale);
-                int y2 = (int) (route.get(i + 1).getY() * scale);
+            int consecutiveOs = 0;
 
-                g2d.drawLine(x1, y1, x2, y2);
+            for (int i = 0; i < route.size(); i++) {
+                Point currentPoint = route.get(i);
+                String currentType = currentPoint.getType();
+
+                if (i > 0) {
+                    Point prevPoint = route.get(i-1);
+                    int x1 = (int) (prevPoint.getX() * scale);
+                    int y1 = (int) (prevPoint.getY() * scale);
+                    int x2 = (int) (currentPoint.getX() * scale);
+                    int y2 = (int) (currentPoint.getY() * scale);
+
+                    g2d.setColor(calculateLineColor(consecutiveOs));
+                    g2d.setStroke(new BasicStroke(2));
+                    g2d.drawLine(x1, y1, x2, y2);
+
+                    drawArrow(g2d, x1, y1, x2, y2);
+                }
+
+                consecutiveOs = currentType.equals("O") ? consecutiveOs + 1 : 0;
             }
 
-            int lastX = (int) (route.getLast().getX() * scale);
-            int lastY = (int) (route.getLast().getY() * scale);
+            Point lastPoint = route.getLast();
+            int lastX = (int) (lastPoint.getX() * scale);
+            int lastY = (int) (lastPoint.getY() * scale);
+            g2d.setColor(calculateLineColor(consecutiveOs));
             g2d.drawLine(lastX, lastY, startX, startY);
+            drawArrow(g2d, lastX, lastY, startX, startY);
+        }
+    }
+
+    private void drawArrow(Graphics2D g2d, int x1, int y1, int x2, int y2) {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        int arrowSize = 15;
+
+        int[] xPoints = {
+                x2,
+                x2 - (int) (arrowSize * Math.cos(angle - Math.PI / 6)),
+                x2 - (int) (arrowSize * Math.cos(angle + Math.PI / 6))
+        };
+        int[] yPoints = {
+                y2,
+                y2 - (int) (arrowSize * Math.sin(angle - Math.PI / 6)),
+                y2 - (int) (arrowSize * Math.sin(angle + Math.PI / 6))
+        };
+
+        g2d.fillPolygon(xPoints, yPoints, 3);
+    }
+
+    private Color calculateLineColor(int consecutiveOs) {
+        int k = Constants.K;
+        if (consecutiveOs > k) {
+            return new Color(128, 0, 128);
+        } else {
+            int redIntensity = (int) (255 * ((float) consecutiveOs / k));
+            return new Color(Math.min(redIntensity, 255), 0, 0);
         }
     }
 
@@ -181,6 +225,13 @@ public class BoardVisualizer extends JPanel {
             visualizer.repaint();
         });
 
+        JButton tabuButton = new JButton("Tabu");
+        tabuButton.addActionListener(_ -> {
+            TabuSearch ts = new TabuSearch(visualizer.operations, visualizer.resetPoints, visualizer.route);
+            visualizer.setRoute(new Route(ts.optimize()).getPoints());
+            visualizer.repaint();
+        });
+
         JButton twoOptButton = new JButton("2-opt");
         twoOptButton.addActionListener(_ -> {
             visualizer.setRoute(TwoOpt.apply2OptImprovement(visualizer.operations));
@@ -193,6 +244,7 @@ public class BoardVisualizer extends JPanel {
         buttonPanel.add(psoButton);
         buttonPanel.add(greedyButton);
         buttonPanel.add(twoOptButton);
+        buttonPanel.add(tabuButton);
         buttonPanel.add(rerollButton);
 
         return buttonPanel;

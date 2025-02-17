@@ -48,17 +48,24 @@ public class Board {
         List<Point> points = new ArrayList<>();
         Random random = new Random();
         int currentID = startingID;
+        int maxAttempts = 1000 * nPoints;
+        int attempts = 0;
 
-        while (points.size() < nPoints) {
+        while (points.size() < nPoints && attempts < maxAttempts) {
             int x = random.nextInt(maxX + 1);
             int y = random.nextInt(maxY + 1);
             Point point = new Point(currentID, type, x, y);
+            attempts++;
 
             if (!existingPoints.contains(point)) {
                 points.add(point);
                 existingPoints.add(point);
                 currentID++;
             }
+        }
+
+        if (points.size() < nPoints) {
+            throw new IllegalStateException("Impossibile generare " + nPoints + " punti univoci dopo " + maxAttempts + " tentativi.");
         }
 
         return points;

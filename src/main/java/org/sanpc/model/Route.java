@@ -1,13 +1,16 @@
 package org.sanpc.model;
 
+import org.sanpc.Constants;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.sanpc.utils.Distance.euclideanDistance;
 
 public class Route {
     private final List<Point> points;
-    private final double length;
+    private double length;
 
     public Route(List<Point> points) {
         this.points = points;
@@ -37,6 +40,34 @@ public class Route {
         return length;
     }
 
+    public void swapPoints(int i, int j) {
+        Collections.swap(points, i, j);
+    }
+
+    public void addPointAt(int i, Point resetPoint) {
+        points.add(i, resetPoint);
+    }
+
+    public Point removePointAt(int index) {
+        return points.remove(index);
+    }
+
+    public int countViolations() {
+        int consecutiveO = 0;
+        int violations = 0;
+        for (Point p : points) {
+            if (p.getType().equals("O")) {
+                consecutiveO++;
+                if (consecutiveO > Constants.K) {
+                    violations++;
+                }
+            } else {
+                consecutiveO = 0;
+            }
+        }
+        return violations;
+    }
+
     @Override
     public String toString() {
         return "Route{" +
@@ -50,7 +81,7 @@ public class Route {
         return points;
     }
     public double getLength() {
+        length = calculateTotalLength(points);
         return length;
     }
-
 }

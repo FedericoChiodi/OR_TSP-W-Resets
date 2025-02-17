@@ -1,4 +1,4 @@
-package org.sanpc.heuristics.LS;
+package org.sanpc.heuristics.LS.twoopt;
 
 import org.sanpc.model.Point;
 import org.sanpc.utils.Distance;
@@ -71,13 +71,20 @@ public class TwoOpt {
 
     /**
      * Effettua l'aggiornamento dei punti del percorso applicando
-     * la mossa della 2-opt
+     * la mossa della 2-opt. Esempio:
+     * <p>
+     * points = [A, B, C, D, E, F, G]
+     * <p>
+     * i = 1, j = 5 -> tra C ed F
+     * <p>
+     * result = [A, B, F, E, D, C, G]
+     *
      *
      * @param points I punti che compongono il percorso totale
-     * @param i      Il primo indice che coinvolge la mossa
-     * @param j      Il secondo indice che coinvolge la mossa
+     * @param i      Il primo indice che coinvolge la mossa esclusivo
+     * @param j      Il secondo indice che coinvolge la mossa inclusivo
      */
-    private static void perform2OptSwap(List<Point> points, int i, int j) {
+    public static void perform2OptSwap(List<Point> points, int i, int j) {
         int left = i + 1;
         int right = j;
         while (left < right) {

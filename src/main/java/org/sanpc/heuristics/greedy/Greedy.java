@@ -1,4 +1,4 @@
-package org.sanpc.heuristics.Greedy;
+package org.sanpc.heuristics.greedy;
 
 import org.sanpc.Constants;
 import org.sanpc.model.Point;

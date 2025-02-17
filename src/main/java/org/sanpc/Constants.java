@@ -2,11 +2,16 @@ package org.sanpc;
 
 public class Constants {
     // TSP related constants
-    public static final int LENGTH = 25;
-    public static final int WIDTH = 25;
-    public static final int K = 3;
-    public static final int N_OPERATIONS = 12;
-    public static final int N_RESETS = 4;
+    public static final int LENGTH = 40;
+    public static final int WIDTH = 40;
+    public static final int K = 5;
+    public static final int N_OPERATIONS = 50;
+    public static final int N_RESETS = 15;
+
+    // Tabu parameters
+    public static final int TABU_LIST_SIZE = 150;
+    public static final int TABU_NO_IMPROVEMENT_STOP = 57500;
+    public static final double TABU_PENALTY = 0.0075 * (LENGTH * WIDTH) * (N_OPERATIONS / (double) K) * (1.0 / (N_RESETS + 1));
 
     // PSO parameters
     public static final int N_PARTICLES = 750;

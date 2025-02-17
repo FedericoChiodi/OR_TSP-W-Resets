@@ -63,13 +63,14 @@ public class Point {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return id == point.id && x == point.x && y == point.y && Objects.equals(type, point.type);
+        return x == point.x && y == point.y && Objects.equals(type, point.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, x, y);
+        return Objects.hash(type, x, y);
     }
 }
