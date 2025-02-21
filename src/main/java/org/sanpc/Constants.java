@@ -9,9 +9,9 @@ public class Constants {
     public static final int N_RESETS = 15;
 
     // Tabu parameters
-    public static final int TABU_LIST_SIZE = 150;
-    public static final int TABU_NO_IMPROVEMENT_STOP = 57500;
-    public static final double TABU_PENALTY = 0.015 * (LENGTH * WIDTH) * (N_OPERATIONS / (double) K) * (1.0 / (N_RESETS + 1));
+    public static final int TABU_LIST_SIZE = 200;
+    public static final int STAGNATION_COUNTER = 57500;
+    public static final double TABU_PENALTY = 0.01 * (LENGTH * WIDTH) * (N_OPERATIONS / (double) K) * (1.0 / (N_RESETS + 1));
 
     // PSO parameters
     public static final int N_PARTICLES = 750;

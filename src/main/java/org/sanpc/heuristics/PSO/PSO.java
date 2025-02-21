@@ -12,17 +12,12 @@ public class PSO {
     private Route globalBest;
     private double globalBestFitness;
 
-    private final List<Point> operationPoints;
-    private final List<Point> resetPoints;
-
-    public PSO(List<Point> operationPoints, List<Point> resetPoints) {
+    public PSO(List<Point> operationPoints) {
         this.swarm = new ArrayList<>();
-        this.operationPoints = operationPoints;
-        this.resetPoints = resetPoints;
-        initialize(operationPoints, resetPoints);
+        initialize(operationPoints);
     }
 
-    private void initialize(List<Point> operationPoints, List<Point> resetPoints) {
+    private void initialize(List<Point> operationPoints) {
         for (int i = 0; i < Constants.N_PARTICLES; i++) {
             List<Point> points = new ArrayList<>(operationPoints);
             Collections.shuffle(points);

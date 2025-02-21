@@ -23,11 +23,9 @@ public class TwoOpt {
             int bestJ = -1;
 
             for (int i = 0; i < routeWithOrigin.size() - 1; i++) {
-                // Salta se il punto corrente è "R"
                 if ("R".equals(routeWithOrigin.get(i).getType())) continue;
 
                 for (int j = i + 2; j < routeWithOrigin.size(); j++) {
-                    // Salta se il punto j è "R" o se ci sono "R" tra i+1 e j
                     if ("R".equals(routeWithOrigin.get(j).getType()) || hasResetBetween(routeWithOrigin, i + 1, j - 1)) {
                         continue;
                     }

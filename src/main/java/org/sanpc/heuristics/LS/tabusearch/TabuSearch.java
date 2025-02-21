@@ -38,7 +38,7 @@ public class TabuSearch {
         LinkedList<Move> tabuList = new LinkedList<>();
 
         // Step 2: EXPLORE NEIGHBORHOOD
-        while (iterations < Constants.TABU_NO_IMPROVEMENT_STOP) {
+        while (iterations < Constants.STAGNATION_COUNTER) {
             aspiration = false;
             System.out.println("\n--- Iterazione: " + iterations + " ---");
             System.out.println("Miglior soluzione: " + evaluate_objective_function(bestSolution));
