@@ -1,6 +1,5 @@
 package org.sanpc;
 
-
 /**
  * TESTO:
  * Un braccio robotico
@@ -13,11 +12,7 @@ package org.sanpc;
  * Si determini la sequenza di operazioni e resettaggio che minimizza
  * la somma degli spostamenti (distanze euclidee tra punti), sapendo
  * che si parte e si termina in posizione 0,0.
- * <p>
- * FORMALIZZAZIONE: todo
 * */
-
-
 
 public class Main {
     public static void main(String[] args) {
