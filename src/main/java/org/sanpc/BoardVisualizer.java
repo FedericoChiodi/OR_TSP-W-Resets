@@ -214,7 +214,7 @@ public class BoardVisualizer extends JPanel {
 
         JButton psoButton = new JButton("PSO");
         psoButton.addActionListener(_ -> {
-            PSO pso = new PSO(visualizer.operations, visualizer.resetPoints);
+            PSO pso = new PSO(visualizer.operations);
             visualizer.setRoute(new Route(pso.optimize()).getPoints());
             visualizer.repaint();
         });
